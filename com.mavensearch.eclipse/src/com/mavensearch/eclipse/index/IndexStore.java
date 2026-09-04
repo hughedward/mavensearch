@@ -91,18 +91,18 @@ public final class IndexStore {
         if (from >= to) {
             throw new IOException("Index corrupt at line " + (row + 1) + ": empty usage");
         }
-        int v = 0;
+        long v = 0; // long 累加：int 累加的 v<0 检查漏掉回绕带（如 4294967300 回绕为 4 被静默接受）
         for (int i = from; i < to; i++) {
             byte c = b[i];
             if (c < '0' || c > '9') {
                 throw new IOException("Index corrupt at line " + (row + 1) + ": bad usage");
             }
             v = v * 10 + (c - '0');
-            if (v < 0) {
+            if (v > Integer.MAX_VALUE) {
                 throw new IOException("Index corrupt at line " + (row + 1) + ": usage overflow");
             }
         }
-        return v;
+        return (int) v;
     }
 
     private static byte[] gunzip(byte[] gz) throws IOException {

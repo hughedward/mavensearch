@@ -67,6 +67,11 @@ class IndexStoreTest {
     }
 
     @Test
+    void rejectsHugeUsage() throws IOException {
+        assertThrows(IOException.class, () -> IndexStore.load(write("com.example:a\t9999999999\n")));
+    }
+
+    @Test
     void rejectsEmptyName() throws IOException {
         assertThrows(IOException.class, () -> IndexStore.load(write("\t5\n")));
     }
