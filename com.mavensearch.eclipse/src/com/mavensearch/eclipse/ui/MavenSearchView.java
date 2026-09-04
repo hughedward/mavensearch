@@ -91,6 +91,7 @@ public final class MavenSearchView extends ViewPart {
                     if (sel instanceof SearchNodes.VersionNode v) {
                         CopyActions.copyToClipboard(spec.format().apply(v.artifact(), v.version().version()));
                         notice.setText("Copied " + spec.title() + ".");
+                        notice.setVisible(true); // 勘误 #25：同双击处
                     }
                 }
             });
@@ -104,6 +105,7 @@ public final class MavenSearchView extends ViewPart {
             if (sel instanceof SearchNodes.VersionNode v) {
                 CopyActions.copyToClipboard(CopyActions.maven(v.artifact(), v.version().version()));
                 notice.setText("Copied Maven snippet.");
+                notice.setVisible(true); // 勘误 #25：runSearch 在有结果时把 notice 隐藏——不重新可见则 "Copied." 永不可见
             }
         });
 
