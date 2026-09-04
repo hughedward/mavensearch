@@ -6,3 +6,7 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: hughedward
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-ActivationPolicy: lazy
+Bundle-Activator: com.mavensearch.eclipse.ui.Activator
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.core.net
