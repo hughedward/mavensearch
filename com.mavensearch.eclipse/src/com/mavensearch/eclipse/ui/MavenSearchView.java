@@ -86,6 +86,9 @@ public final class MavenSearchView extends ViewPart {
 
     void runSearch(String query) {
         SearchServiceAsync.search(Activator.getDefault().getSearchService()::search, query, 20, result -> {
+            if (searchInput.isDisposed() || !query.equals(searchInput.getText())) {
+                return; // 勘误 #23：过期结果（乱序回投）或视图已关闭——丢弃
+            }
             // 提示行（spec §7）：在线兜底提示 / 无结果建议输完整 g:a
             String hint;
             if (!result.fromIndex() && !result.artifacts().isEmpty()) {

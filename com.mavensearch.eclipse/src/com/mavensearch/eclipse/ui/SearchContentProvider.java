@@ -1,7 +1,6 @@
 package com.mavensearch.eclipse.ui;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -23,7 +22,6 @@ final class SearchContentProvider implements ITreeContentProvider {
     private final java.util.function.Supplier<TreeViewer> viewer;
     /** ga → 当前子节点（含 Loading/Error/More），保证展开结果稳定。 */
     private final Map<String, Object[]> children = new ConcurrentHashMap<>();
-    private final Map<String, VersionPage> fullPages = new HashMap<>();
     private final Map<String, Boolean> loading = new ConcurrentHashMap<>();
 
     SearchContentProvider(java.util.function.Supplier<TreeViewer> viewer) {
@@ -113,9 +111,14 @@ final class SearchContentProvider implements ITreeContentProvider {
     }
 
     private static Object artifact2Node(TreeViewer v, Artifact artifact) {
-        for (Object el : (Object[]) v.getInput()) {
-            if (el instanceof SearchNodes.ArtifactNode an && an.artifact().name().equals(artifact.name())) {
-                return an;
+        // 勘误 #22：viewer 的 input 恒为 List（View 两处 setInput 均传 List）——原 (Object[]) 强转
+        // 必抛 ClassCastException，版本展开永久卡 Loading。按 List 匹配 Artifact 并构造 ArtifactNode
+        //（record 结构相等，可命中 refresh）。
+        if (v.getInput() instanceof List<?> list) {
+            for (Object el : list) {
+                if (el instanceof Artifact a && a.name().equals(artifact.name())) {
+                    return new SearchNodes.ArtifactNode(a);
+                }
             }
         }
         return artifact;
