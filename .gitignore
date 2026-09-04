@@ -1,0 +1,12 @@
+target/
+bin/
+*.class
+.settings/
+.project
+.classpath
+.polyglot.*
+.tycho-consumer-pom.xml
+.DS_Store
+docs/
+__pycache__/
+*.log
