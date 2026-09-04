@@ -44,7 +44,12 @@ public final class MavenCentralClient {
         if (r.status() != 200) {
             throw new IOException("solrsearch HTTP " + r.status());
         }
-        Map<String, Object> root = MiniJson.obj(new String(r.body(), StandardCharsets.UTF_8));
+        Map<String, Object> root;
+        try {
+            root = MiniJson.obj(new String(r.body(), StandardCharsets.UTF_8));
+        } catch (RuntimeException e) { // 勘误 #17：MiniJson 对畸形 200 body 抛 IllegalArgumentException——契约要求失败一律 IOException
+            throw new IOException("bad solrsearch response", e);
+        }
         Map<String, Object> response = cast(root.get("response"));
         List<Object> docs = response == null ? List.of() : toList(response.get("docs"));
         List<Artifact> out = new ArrayList<>();

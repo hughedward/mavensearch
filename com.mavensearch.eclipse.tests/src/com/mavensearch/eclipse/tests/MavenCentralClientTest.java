@@ -75,6 +75,13 @@ class MavenCentralClientTest {
     }
 
     @Test
+    void malformed200BodyThrowsIoException() throws Exception {
+        // 勘误 #17：200 + 非 JSON body（HTML 错误页/截断负载）也必须走 IOException 契约
+        MavenCentralClient c = client(200, "<html>not json</html>", null);
+        assertThrows(IOException.class, () -> c.search("x", 20));
+    }
+
+    @Test
     void queryIsUrlEncoded() throws Exception {
         StringBuilder captured = new StringBuilder();
         MavenCentralClient c = client(200,
@@ -83,6 +90,9 @@ class MavenCentralClientTest {
         c.search("spring boot", 5);
         org.junit.jupiter.api.Assertions.assertTrue(
                 captured.toString().contains("rows=5"),
+                "query=" + captured);
+        org.junit.jupiter.api.Assertions.assertTrue(
+                captured.toString().contains("q=spring+boot"), // 勘误 #17：钉死 URL 编码（空格→+），URLEncoder 被删即红
                 "query=" + captured);
     }
 }
