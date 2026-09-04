@@ -3,6 +3,7 @@ package com.mavensearch.eclipse.ui;
 import java.util.List;
 
 import org.eclipse.jface.viewers.ColumnLabelProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.TreeViewerColumn;
 import org.eclipse.swt.SWT;
@@ -74,8 +75,46 @@ public final class MavenSearchView extends ViewPart {
             }
         });
 
-        viewer.setContentProvider(new SearchContentProvider(this::viewer));
+        SearchContentProvider provider = new SearchContentProvider(this::viewer);
+        viewer.setContentProvider(provider);
         viewer.setInput(List.<Artifact>of());
+
+        org.eclipse.jface.action.MenuManager menu = new org.eclipse.jface.action.MenuManager();
+        for (CopySpec spec : List.of(
+                new CopySpec("Copy Maven", CopyActions::maven),
+                new CopySpec("Copy Gradle", CopyActions::gradle),
+                new CopySpec("Copy Gradle (Kotlin DSL)", CopyActions::gradleKts))) {
+            menu.add(new org.eclipse.jface.action.Action(spec.title()) {
+                @Override
+                public void run() {
+                    Object sel = viewer.getStructuredSelection().getFirstElement();
+                    if (sel instanceof SearchNodes.VersionNode v) {
+                        CopyActions.copyToClipboard(spec.format().apply(v.artifact(), v.version().version()));
+                        notice.setText("Copied " + spec.title() + ".");
+                    }
+                }
+            });
+        }
+        viewer.getControl().setMenu(menu.createContextMenu(viewer.getControl()));
+
+        viewer.addDoubleClickListener(event -> {
+            // 勘误（Task 10）：DoubleClickEvent/SelectionEvent 在 2024-12 JFace 无
+            // getStructuredSelection()（仅 StructuredViewer 有）——规范强转惯用法
+            Object sel = ((IStructuredSelection) event.getSelection()).getFirstElement();
+            if (sel instanceof SearchNodes.VersionNode v) {
+                CopyActions.copyToClipboard(CopyActions.maven(v.artifact(), v.version().version()));
+                notice.setText("Copied Maven snippet.");
+            }
+        });
+
+        viewer.getTree().addListener(SWT.MouseDown, e -> {
+            // 点到 More/Error 节点即触发（行命中测试）
+            org.eclipse.swt.widgets.TreeItem item =
+                    viewer.getTree().getItem(new org.eclipse.swt.graphics.Point(e.x, e.y));
+            if (item != null && item.getItemCount() == 0 && item.getData() != null) {
+                provider.expandSpecial(item.getData());
+            }
+        });
 
         searchInput.setFocus();
     }
@@ -108,5 +147,9 @@ public final class MavenSearchView extends ViewPart {
     @Override
     public void setFocus() {
         searchInput.setFocus();
+    }
+
+    private record CopySpec(String title,
+            java.util.function.BiFunction<Artifact, String, String> format) {
     }
 }
