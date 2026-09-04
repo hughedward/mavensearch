@@ -10,3 +10,4 @@ bin/
 docs/
 __pycache__/
 *.log
+settings-local.xml

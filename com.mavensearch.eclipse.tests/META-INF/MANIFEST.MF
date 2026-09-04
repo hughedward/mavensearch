@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Maven Search Tests
+Bundle-SymbolicName: com.mavensearch.eclipse.tests
+Bundle-Version: 1.0.0.qualifier
+Fragment-Host: com.mavensearch.eclipse
+Bundle-RequiredExecutionEnvironment: JavaSE-17
+Require-Bundle: junit-jupiter-api;bundle-version="5.11",
+ junit-jupiter-engine;bundle-version="5.11"

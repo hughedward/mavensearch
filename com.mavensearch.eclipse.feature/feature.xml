@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="com.mavensearch.eclipse.feature"
+      label="Maven Search"
+      version="1.0.0.qualifier"
+      provider-name="hughedward">
+
+  <description url="https://github.com/hughedward/mavensearch">
+    Search Maven Central artifacts with usage counts, browse versions and copy dependency coordinates.
+  </description>
+
+  <copyright>Copyright (c) 2026 hughedward</copyright>
+  <license url="https://opensource.org/licenses/MIT">MIT License</license>
+
+  <plugin
+      id="com.mavensearch.eclipse"
+      download-size="0"
+      install-size="0"
+      version="0.0.0"
+      unpack="false"/>
+</feature>
