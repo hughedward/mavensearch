@@ -13,6 +13,8 @@
     <tycho.version>5.0.4</tycho.version>
     <!-- 正式构建用官方源；本机可 -Declipse-p2.url=https://mirrors.tuna.tsinghua.edu.cn/eclipse/releases/2024-12/ 提速 -->
     <eclipse-p2.url>https://download.eclipse.org/releases/2024-12/</eclipse-p2.url>
+    <!-- 契约运行 CLI 覆盖：-Dtests.excludedGroups= -Dgroups=contract（pom 硬编码值 -D 覆盖不了） -->
+    <tests.excludedGroups>contract</tests.excludedGroups>
   </properties>
 
   <modules>
@@ -60,7 +62,7 @@
           <artifactId>tycho-surefire-plugin</artifactId>
           <version>${tycho.version}</version>
           <configuration>
-            <excludedGroups>contract</excludedGroups>
+            <excludedGroups>${tests.excludedGroups}</excludedGroups>
           </configuration>
         </plugin>
       </plugins>
