@@ -19,7 +19,8 @@ public final class VersionComparator implements Comparator<String> {
     private static final Pattern SPLIT = Pattern.compile("[-._]");
     private static final Pattern NUMERIC = Pattern.compile("\\d+");
     private static final Pattern PRERELEASE = Pattern.compile(
-            "(?i)^.*(snapshot|-m\\d+|-rc\\d*|-alpha\\d*|-beta\\d*|-cr\\d*|-ea|-milestone\\d*).*$");
+            // 勘误 #15：限定词分隔符 [-.] 与 SPLIT 一致——点分隔的 3.2.0.M2 / 5.0.0.RC1 也是预发布
+            "(?i)^.*(snapshot|[-.]m\\d+|[-.]rc\\d*|[-.]alpha\\d*|[-.]beta\\d*|[-.]cr\\d*|[-.]ea\\d*|[-.]milestone\\d*).*$");
 
     private VersionComparator() {
     }

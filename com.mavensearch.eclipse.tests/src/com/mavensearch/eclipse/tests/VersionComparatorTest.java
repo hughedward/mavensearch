@@ -54,8 +54,19 @@ class VersionComparatorTest {
         assertTrue(VersionComparator.isPrerelease("2.0.0-RC1"));
         assertTrue(VersionComparator.isPrerelease("1.0.0-alpha1"));
         assertTrue(VersionComparator.isPrerelease("1.0.0-beta2"));
+        assertTrue(VersionComparator.isPrerelease("3.2.0.M2")); // 勘误 #15：点分隔限定词
+        assertTrue(VersionComparator.isPrerelease("5.0.0.RC1"));
         assertFalse(VersionComparator.isPrerelease("1.0.0"));
         assertFalse(VersionComparator.isPrerelease("2.0.57"));
         assertFalse(VersionComparator.isPrerelease("1.0.0.Final"));
+    }
+
+    @Test
+    void instanceIsAscendingBaseline() {
+        // 勘误 #13/#16：INSTANCE 升序是 Task 7「.reversed() 得降序展示」的前提；
+        // 套件其余断言全经 .reversed() 组合，INSTANCE 方向翻转时依然全绿——此处直接钉死方向。
+        assertTrue(VersionComparator.INSTANCE.compare("1.0.0", "1.0.0-rc1") > 0);
+        assertTrue(VersionComparator.INSTANCE.compare("0.9", "1.0-SNAPSHOT") < 0, "跨前缀：数字段先决定（勘误 #14）");
+        assertEquals(0, VersionComparator.INSTANCE.compare("1.0.0", "1.0.0"));
     }
 }
