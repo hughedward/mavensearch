@@ -13,7 +13,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
 /** GA → 版本列表（maven-metadata.xml）；GA:V → 发布日期（HEAD .pom 的 Last-Modified）。 */
-public final class MavenMetadataClient {
+public class MavenMetadataClient {
 
     private static final Duration METADATA_TIMEOUT = Duration.ofSeconds(5);
 

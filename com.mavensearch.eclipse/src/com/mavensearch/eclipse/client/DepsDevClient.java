@@ -10,7 +10,7 @@ import com.mavensearch.eclipse.json.MiniJson;
 import com.mavensearch.eclipse.model.ArtifactVersion;
 
 /** GAV → 版本级使用量（api.deps.dev，顶层 dependentCount）。失败一律返回 UNKNOWN，不抛异常。 */
-public final class DepsDevClient {
+public class DepsDevClient {
 
     private static final Duration TIMEOUT = Duration.ofSeconds(3);
 
